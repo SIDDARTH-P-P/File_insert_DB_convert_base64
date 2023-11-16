@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1><b>user data</b></h1>
+    <form onsubmit="add_data(event)">
+        <input type="text" name="username" placeholder="username">
+        <input type="email" name="email" placeholder="email">
+        <input type="text" name="phone" id="" placeholder="phone">
+        <input type="file" name="profile" id="">
+        <br>
+        <h1>Hobbies</h1>
+        <h4> draving <input type="checkbox" name="hobbi" value="draving"> </h4>
+        <h4> writting <input type="checkbox" name="hobbi" value="writting"> </h4>
+        <h4> reding <input type="checkbox" name="hobbi" value="reding"></h4>
+        <h4> swimming <input type="checkbox" name="hobbi" value="swimming"></h4>
+        <input type="submit" value="send">
+    </form>
+
+
+
+    <script>
+        function add_data(event){
+            event.preventDefault();
+            formdata = new FormData(event.target);
+
+            let username = formdata.get("username");
+            let email = formdata.get("email");
+            let phone = formdata.get("phone");
+            let profile = formdata.get("profile");
+            let hobbi = formdata.getAll("hobbi")
+            convert(profile)
+            .then(profile =>{
+                fetch(`http://localhost:3000/api`,{
+                    method:"post",
+                    headers:{"Content-Type":"application/json"},
+                    body:JSON.stringify({username,email,phone,profile,hobbi})
+                })
+                .then(res =>{
+                    if(res.status == 200){
+                        location.href = (`http://localhost:3000/index.html`);
+                    }
+                })
+            })
+        }
+
+
+        function convert(file){
+            return new Promise((res,rej)=>{
+                let read = new FileReader();
+                read.readAsDataURL(file)
+                read.onload = () =>{
+                    res(read.result)
+                }
+                read.onerror = (error) =>{
+                    rej(error)
+                }
+            })
+        }
+    </script>
+</body>
+</html>
